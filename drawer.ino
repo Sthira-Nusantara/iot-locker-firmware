@@ -15,7 +15,7 @@
 #define NUM_LEDS 1
 #define DATA_PIN 5
 
-const String FirmwareVer = {"1.0"};
+const String FirmwareVer = {"1.1"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-drawer-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-drawer-firmware/master/firmware.bin"
 
@@ -117,7 +117,7 @@ void registerDevice() {
     Serial.printf("[HTTP] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
   }
 
-//  https.end();
+  //  https.end();
 
 }
 
@@ -187,7 +187,7 @@ void FirmwareUpdate()
         Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
       }
 
-//      https.end();
+      //      https.end();
     } else {
       Serial.printf("[HTTPS] Unable to connect\n");
     }
@@ -389,7 +389,7 @@ void callback(char *topic, byte *payload, unsigned int length)
         Serial.printf("[HTTP] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
       }
 
-//      https.end();
+      //      https.end();
     }
   }
 
@@ -434,7 +434,21 @@ boolean reconnect()
 
 void setup()
 {
+
   Serial.begin(115200);
+
+  Serial.println("");
+  Serial.println("");
+  Serial.println("");
+  Serial.println("");
+  Serial.println("");
+  Serial.println("");
+  Serial.println("=========================================");
+  Serial.println("============STHIRA NUSANTARA=============");
+  Serial.println("=========================================");
+
+  Serial.print("Current Firmware Version: ");
+  Serial.println(FirmwareVer);
 
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
 
@@ -464,7 +478,7 @@ void setup()
   setup_wifi();
 
   registerDevice();
-  
+
 
   mqttClient.setServer(mqtt_server, 1883);
   mqttClient.setCallback(callback);
@@ -488,6 +502,12 @@ void loop()
   int thisSecond = timeClient.getSeconds();
 
   if (thisHour == 0 && thisMinute == 1 && thisSecond == 0)
+  {
+    Serial.println("Checking firmware update");
+    FirmwareUpdate();
+  }
+
+  if (thisHour == 11 && thisMinute == 55 && thisSecond == 0)
   {
     Serial.println("Checking firmware update");
     FirmwareUpdate();
