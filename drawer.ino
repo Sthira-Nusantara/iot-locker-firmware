@@ -129,6 +129,9 @@ void FirmwareUpdate()
 
     deviceClient.setInsecure();
 
+//    deviceClient.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
+
+
     HTTPClient https;
 
     Serial.print("[HTTPS] begin...\n");
@@ -160,6 +163,11 @@ void FirmwareUpdate()
           else
           {
             Serial.println("New firmware detected");
+
+            https.begin(deviceClient, URL_fw_Bin);
+            https.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
+            https.addHeader(F("Accept"), "application/vnd.github.v3+json");
+            
             ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
 
             Serial.println("Device ready to update");
@@ -187,7 +195,7 @@ void FirmwareUpdate()
         Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
       }
 
-      //      https.end();
+            https.end();
     } else {
       Serial.printf("[HTTPS] Unable to connect\n");
     }
@@ -507,7 +515,7 @@ void loop()
     FirmwareUpdate();
   }
 
-  if (thisHour == 11 && thisMinute == 55 && thisSecond == 0)
+  if (thisHour == 13 && thisMinute == 30 && thisSecond == 0)
   {
     Serial.println("Checking firmware update");
     FirmwareUpdate();
