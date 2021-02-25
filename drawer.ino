@@ -15,7 +15,7 @@
 #define NUM_LEDS 1
 #define DATA_PIN 5
 
-const String FirmwareVer = {"1.1"};
+const String FirmwareVer = {"1.2"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-drawer-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-drawer-firmware/master/firmware.bin"
 
@@ -515,11 +515,18 @@ void loop()
     FirmwareUpdate();
   }
 
-  if (thisHour == 13 && thisMinute == 35 && thisSecond == 0)
+  if (thisHour == 1 && thisMinute == 1 && thisSecond == 0)
   {
     Serial.println("Checking firmware update");
     FirmwareUpdate();
   }
+
+  if (thisHour == 2 && thisMinute == 1 && thisSecond == 0)
+  {
+    Serial.println("Checking firmware update");
+    FirmwareUpdate();
+  }
+
 
 
   if (!mqttClient.connected())
