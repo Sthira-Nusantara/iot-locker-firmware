@@ -16,8 +16,8 @@
 #define DATA_PIN 5
 
 const String FirmwareVer = {"1.0"};
-#define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-room-firmware/master/version.txt"
-#define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-room-firmware/master/firmware.bin"
+#define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-drawer-firmware/master/version.txt"
+#define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-drawer-firmware/master/firmware.bin"
 
 String URL_register = "https://api.rupira.com/v2/iot/request";
 String URL_authenticate = "https://api.rupira.com/v2/iot/authenticate";
@@ -479,6 +479,18 @@ void loop()
     changeColor(CRGB::Red);
 
     setup_wifi();
+  }
+
+  timeClient.update();
+
+  int thisHour = timeClient.getHours();
+  int thisMinute = timeClient.getMinutes();
+  int thisSecond = timeClient.getSeconds();
+
+  if (thisHour == 0 && thisMinute == 1 && thisSecond == 0)
+  {
+    Serial.println("Checking firmware update");
+    FirmwareUpdate();
   }
 
 
