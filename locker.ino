@@ -9,21 +9,21 @@
 #include <NTPClient.h>
 
 
+String URL_authenticate = "https://api.rupira.com/v1/iot/authenticate";
+
+
+const char *mqtt_server = "mqtt.rupira.com";
 // Relay Toggler Initialize
 #define RELAY 16     //D0
 
 #define NUM_LEDS 1
 #define DATA_PIN 2
 
-const String FirmwareVer = {"1.1"};
+const String FirmwareVer = {"1.2"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/firmware.bin"
 
-String URL_register = "https://api.rupira.com/v2/iot/request";
-String URL_authenticate = "https://api.rupira.com/v2/iot/authenticate";
-
-
-const char *mqtt_server = "mqtt.rupira.com";
+String URL_register = "https://api.rupira.com/v1/iot/request";
 String MacAdd = String(WiFi.macAddress());
 
 const char *ssid = "IOT_STHIRA";
@@ -373,14 +373,14 @@ void callback(char *topic, byte *payload, unsigned int length)
           if (String(hasil) == "true")
           {
             // Open Door
-            digitalWrite(RELAY, LOW);
+            digitalWrite(RELAY, HIGH);
             Serial.println("Door Open");
             changeColor(CRGB::Green);
 
             delay(5000);
 
             // Close Door
-            digitalWrite(RELAY, HIGH);
+            digitalWrite(RELAY, LOW);
             Serial.println("Door Close");
             changeColor(CRGB::Red);
 
@@ -433,7 +433,7 @@ boolean reconnect()
     mqttClient.subscribe(failureSubs.c_str());
     mqttClient.subscribe(openSubs.c_str());
     mqttClient.subscribe(testSubs.c_str());
-    digitalWrite(RELAY, HIGH);
+    digitalWrite(RELAY, LOW);
   }
   else
   {
@@ -470,7 +470,7 @@ void setup()
 
   pinMode(RELAY, OUTPUT);
 
-  digitalWrite(RELAY, HIGH);
+  digitalWrite(RELAY, LOW);
 
   //  Testing LED
 
