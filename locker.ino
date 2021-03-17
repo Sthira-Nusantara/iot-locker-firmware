@@ -19,7 +19,7 @@ const char *mqtt_server = "mqtt.rupira.com";
 #define NUM_LEDS 1
 #define DATA_PIN 2
 
-const String FirmwareVer = {"1.2"};
+const String FirmwareVer = {"4.0"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/firmware.bin"
 
@@ -43,6 +43,7 @@ String openSubs = prefix + "/toggle/+";
 String failureSubs = prefix + "/bellRing";
 String successSubs = prefix + "/opendoor";
 String testSubs = prefix + "/test";
+String mobilePub = prefix + "/mobile/opendoor";
 
 const long utcOffsetInSeconds = 25200;
 
@@ -129,14 +130,14 @@ void FirmwareUpdate()
 
     deviceClient.setInsecure();
 
-//    deviceClient.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
+    //    deviceClient.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
 
 
     HTTPClient https;
 
     Serial.print("[HTTPS] begin...\n");
     if (https.begin(deviceClient, URL_fw_Version)) {  // HTTPS
-//      https.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
+      //      https.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
 
 
       Serial.print("[HTTPS] GET...\n");
@@ -163,10 +164,6 @@ void FirmwareUpdate()
           else
           {
             Serial.println("New firmware detected");
-
-//            https.begin(deviceClient, URL_fw_Bin);
-//            https.addHeader("Authorization", "Bearer affd6c0995d4b701ce6e67b2531eb368177f3e7f");
-//            https.addHeader(F("Accept"), "application/vnd.github.v3+json");
             
             ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
 
@@ -195,7 +192,7 @@ void FirmwareUpdate()
         Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
       }
 
-            https.end();
+      https.end();
     } else {
       Serial.printf("[HTTPS] Unable to connect\n");
     }
@@ -279,7 +276,17 @@ void setup_wifi()
   delay(10);
   // We start by connecting to a WiFi network
 
+  
+  scanSSID:
   String BSSIDnetwork = scanNetwork(ssid);
+
+  if(BSSIDnetwork == "") {
+    goto scanSSID;
+  } else {
+    goto scanChan;
+  }
+
+  scanChan:
   int chan = getChannel(BSSIDnetwork);
 
   int n = BSSIDnetwork.length();
@@ -305,10 +312,10 @@ void setup_wifi()
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
+    delay(250);
     changeColor(CRGB::Red);
     Serial.print(".");
-    delay(500);
+    delay(250);
     changeColor(CRGB::Black);
   }
 
@@ -383,6 +390,16 @@ void callback(char *topic, byte *payload, unsigned int length)
             digitalWrite(RELAY, LOW);
             Serial.println("Door Close");
             changeColor(CRGB::Red);
+
+//            const char* closeMobilePub;
+//            String closePubPayload="{\"UNUM\": \""+UNUM+"\",\"name\":\"access\", \"opened\": false}";
+//            int closeMobilePub_len = closePubPayload.length()+1;
+//            char closeMobilePub_array[closeMobilePub_len];
+//
+//
+//            closeMobilePub = mobilePub.c_str();
+//            
+//            mqttClient.publish(mobilePub.c_str(), closeMobilePub);
 
             delay(1000);
           }
