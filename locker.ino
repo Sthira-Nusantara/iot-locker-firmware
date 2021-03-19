@@ -19,7 +19,7 @@ const char *mqtt_server = "mqtt.rupira.com";
 #define NUM_LEDS 1
 #define DATA_PIN 2
 
-const String FirmwareVer = {"4.0"};
+const String FirmwareVer = {"4.1"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/firmware.bin"
 
@@ -164,7 +164,7 @@ void FirmwareUpdate()
           else
           {
             Serial.println("New firmware detected");
-            
+
             ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
 
             Serial.println("Device ready to update");
@@ -276,39 +276,44 @@ void setup_wifi()
   delay(10);
   // We start by connecting to a WiFi network
 
-  
-  scanSSID:
+
+scanSSID:
   String BSSIDnetwork = scanNetwork(ssid);
 
-  if(BSSIDnetwork == "") {
+  //  if (BSSIDnetwork == "") {
+  //    goto scanSSID;
+  //  } else {
+  //    goto scanChan;
+  //  }
+
+  if (BSSIDnetwork == "") {
     goto scanSSID;
-  } else {
-    goto scanChan;
   }
 
-  scanChan:
-  int chan = getChannel(BSSIDnetwork);
+  //  scanChan:
+  //  int chan = getChannel(BSSIDnetwork);
 
-  int n = BSSIDnetwork.length();
-
-  char char_array[n + 1];
-
-  strcpy(char_array, BSSIDnetwork.c_str());
-
-  uint16_t num = strtoul(char_array, nullptr, 16);
-
-  uint8_t bssid[sizeof(num)];
-  memcpy(bssid, &num, sizeof(num));
+  //  int n = BSSIDnetwork.length();
+  //
+  //  char char_array[n + 1];
+  //
+  //  strcpy(char_array, BSSIDnetwork.c_str());
+  //
+  //  uint16_t num = strtoul(char_array, nullptr, 16);
+  //
+  //  uint8_t bssid[sizeof(num)];
+  //  memcpy(bssid, &num, sizeof(num));
 
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-  Serial.print("Connecting to BSSID ");
-  Serial.println(BSSIDnetwork);
-  Serial.print("Connecting to Channel ");
-  Serial.println(chan);
+  //  Serial.print("Connecting to BSSID ");
+  //  Serial.println(BSSIDnetwork);
+  //  Serial.print("Connecting to Channel ");
+  //  Serial.println(chan);
 
-  WiFi.begin(ssid, password, chan, bssid);
+  //  WiFi.begin(ssid, password, chan, bssid);
+  WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -391,15 +396,6 @@ void callback(char *topic, byte *payload, unsigned int length)
             Serial.println("Door Close");
             changeColor(CRGB::Red);
 
-//            const char* closeMobilePub;
-//            String closePubPayload="{\"UNUM\": \""+UNUM+"\",\"name\":\"access\", \"opened\": false}";
-//            int closeMobilePub_len = closePubPayload.length()+1;
-//            char closeMobilePub_array[closeMobilePub_len];
-//
-//
-//            closeMobilePub = mobilePub.c_str();
-//            
-//            mqttClient.publish(mobilePub.c_str(), closeMobilePub);
 
             delay(1000);
           }
@@ -469,6 +465,8 @@ void setup()
 {
 
   Serial.begin(115200);
+
+  delay(100);
 
   Serial.println("");
   Serial.println("");
@@ -547,6 +545,24 @@ void loop()
   }
 
   if (thisHour == 2 && thisMinute == 1 && thisSecond == 0)
+  {
+    Serial.println("Checking firmware update");
+    FirmwareUpdate();
+  }
+
+  if (thisHour == 19 && thisMinute == 1 && thisSecond == 0)
+  {
+    Serial.println("Checking firmware update");
+    FirmwareUpdate();
+  }
+
+  if (thisHour == 20 && thisMinute == 1 && thisSecond == 0)
+  {
+    Serial.println("Checking firmware update");
+    FirmwareUpdate();
+  }
+
+  if (thisHour == 21 && thisMinute == 1 && thisSecond == 0)
   {
     Serial.println("Checking firmware update");
     FirmwareUpdate();
