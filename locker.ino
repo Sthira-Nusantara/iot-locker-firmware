@@ -19,7 +19,7 @@ const char *mqtt_server = "mqtt.rupira.com";
 #define NUM_LEDS 1
 #define DATA_PIN 2
 
-const String FirmwareVer = {"4.2"};
+const String FirmwareVer = {"4.3"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/firmware.bin"
 
@@ -355,14 +355,14 @@ void callback(char *topic, byte *payload, unsigned int length)
   {
     if (payload[0] == '1')
     {
-      digitalWrite(RELAY, LOW);
+      digitalWrite(RELAY, HIGH);
       Serial.println("Door Open");
       changeColor(CRGB::Green);
 
       delay(5000);
 
       // Close Door
-      digitalWrite(RELAY, HIGH);
+      digitalWrite(RELAY, LOW);
       Serial.println("Door Close");
       changeColor(CRGB::Red);
 
@@ -474,6 +474,8 @@ void setup()
 
   mqttClient.setServer(mqtt_server, 1883);
   mqttClient.setCallback(callback);
+
+  FirmwareUpdate();
   timeClient.begin();
 }
 
