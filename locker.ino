@@ -19,7 +19,7 @@ const char *mqtt_server = "mqtt.rupira.com";
 #define NUM_LEDS 1
 #define DATA_PIN 2
 
-const String FirmwareVer = {"4.4"};
+const String FirmwareVer = {"4.5"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/firmware.bin"
 
@@ -400,7 +400,8 @@ boolean reconnect()
   if (mqttClient.connect(clientId.c_str()))
   {
     Serial.println("connected");
-    mqttClient.publish("connected", MacAdd.c_str());
+    String dataPublish = MacAdd + FirmwareVer;
+    mqttClient.publish("connected", dataPublish.c_str());
 
     //      Your Subs
     mqttClient.subscribe(successSubs.c_str());
