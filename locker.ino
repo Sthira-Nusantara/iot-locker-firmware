@@ -19,7 +19,7 @@ const char *mqtt_server = "mqtt.rupira.com";
 #define NUM_LEDS 1
 #define DATA_PIN 2
 
-const String FirmwareVer = {"4.3"};
+const String FirmwareVer = {"4.4"};
 #define URL_fw_Version "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/Sthira-Nusantara/iot-locker-firmware/master/firmware.bin"
 
@@ -355,14 +355,14 @@ void callback(char *topic, byte *payload, unsigned int length)
   {
     if (payload[0] == '1')
     {
-      digitalWrite(RELAY, HIGH);
+      digitalWrite(RELAY, LOW);
       Serial.println("Door Open");
       changeColor(CRGB::Green);
 
       delay(5000);
 
       // Close Door
-      digitalWrite(RELAY, LOW);
+      digitalWrite(RELAY, HIGH);
       Serial.println("Door Close");
       changeColor(CRGB::Red);
 
@@ -407,7 +407,7 @@ boolean reconnect()
     mqttClient.subscribe(failureSubs.c_str());
 //    mqttClient.subscribe(openSubs.c_str());
     mqttClient.subscribe(testSubs.c_str());
-    digitalWrite(RELAY, LOW);
+    digitalWrite(RELAY, HIGH);
   }
   else
   {
@@ -446,7 +446,7 @@ void setup()
 
   pinMode(RELAY, OUTPUT);
 
-  digitalWrite(RELAY, LOW);
+  digitalWrite(RELAY, HIGH);
 
   //  Testing LED
 
@@ -469,13 +469,15 @@ void setup()
 
   setup_wifi();
 
+  
+  FirmwareUpdate();
+
   registerDevice();
 
 
   mqttClient.setServer(mqtt_server, 1883);
   mqttClient.setCallback(callback);
 
-  FirmwareUpdate();
   timeClient.begin();
 }
 
